@@ -1,0 +1,82 @@
+{% extends 'blog/base.html' %}
+{% block content %}
+{% load static %}
+<div class="row justify-content-left p-2" style="background-color:black;">
+    <div class="col-8">
+    <form action = "{% url 'search' %}" method = "POST"> 
+    {% csrf_token %}  
+    <input class="form-control mr-sm-2" id="your_name" type="text" placeholder="Search by title..." name="your_name">  
+    </form>
+    </div>
+    <div class="col-4">
+        <!-- Example single danger button -->
+        <div class="btn-group">
+            <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Fields
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="/post/Technology">Technology</a>
+                <a class="dropdown-item" href="/post/Entairnment">Entairnment</a>
+            </div>
+        </div>
+    </div>
+</div><br>
+<h3 class="text-center"><b>Total Post ({{posts.count}})</b></h3>
+    {% for post in posts %}
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card ">
+                        <h5 class="card-header"><!--user.profile.image.url-->                  
+                            <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}" alt="ads" style="height: 40px; width: 40px;">
+                            <a href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
+                            {% if post.author.profile.instagram_link %}
+                            <a href="{{post.author.profile.instagram_link}}"><img src="{% static 'blog/insta.jpg' %}" class="rounded float-right p-1" alt="..." style="height: 30px;">&nbsp;</a>
+                            {% endif %}
+                            {% if post.author.profile.twitter_link %}
+                            <a href="{{post.author.profile.twitter_link}}"><img src="{% static 'blog/twitter.jpg' %}" class="rounded float-right p-1" alt="..." style="height: 30px;"></a>
+                            {% endif %}
+                            {% if post.author.profile.facebook_link %}
+                            <a href="{{post.author.profile.facebook_link}}"><img src="{% static 'blog/face.jpg' %}" class="rounded float-right p-1" alt="..." style="height: 30px;"></a>
+                            {% endif %}
+                        </h5>
+                        <div class="card-body">
+                            <h4 class="card-title">
+                                <img src="{{post.starting_image.url}}" class="rounded float-right" alt="..." style="height: 150px; width: 150px;">
+                                <a href="{% url 'bookmark' post request.user %}"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-bookmark rounded float-right mr-3" viewBox="0 0 16 16">
+                                    <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5V2zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1H4z"/>
+                                  </svg></a>
+                                <a href="{% url 'post-detail' post.slug %}"><h5><b>{{post.title}}</b></h5></a>                              
+                            </h4>
+                            <p class="card-text"><b>({{post.field}})</b></p>
+                            <p class="card-text">{{post.about_blog}}</p>
+                            <!--<p class="card-text ">{{post.about_blog|length}}</p>-->
+                            {% load tz %}
+                            <small class="text-muted text-left ">{{ post.date_posted|timezone:"Asia/Kolkata" }}</small>
+                            <small class="text-muted text-left p-3">5 min reads</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        {% endfor %}
+    {% if is_paginated %}
+        {% if page_obj.has_previous %}
+            <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
+            <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number">Previous</a>
+        {% endif %}
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
+            {% elif num > page_obj.number|add:'-2' and num < page_obj.number|add:'2' %}
+                <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+            <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
+            <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+        {% endif %}
+    {% endif %}
+    
+{% endblock content %}

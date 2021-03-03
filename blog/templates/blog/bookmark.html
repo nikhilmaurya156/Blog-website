@@ -1,0 +1,45 @@
+{% extends 'blog/base.html' %}
+{% block content %}
+{% load static %}
+{% if a|length > 0 %}
+    {% for post in posts %}
+    {% if post in a %}
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card ">                        
+                        <h5 class="card-header" color><!--user.profile.image.url-->
+                            <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}" alt="ads" style="height: 40px; width: 40px;">
+                            <a href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
+                            {% if post.author.profile.instagram_link %}
+                            <a href="{{post.author.profile.instagram_link}}"><img src="{% static 'blog/insta.jpg' %}" class="rounded float-right p-1" alt="..." style="height: 30px;">&nbsp;</a>
+                            {% endif %}
+                            {% if post.author.profile.twitter_link %}
+                            <a href="{{post.author.profile.twitter_link}}"><img src="{% static 'blog/twitter.jpg' %}" class="rounded float-right p-1" alt="..." style="height: 30px;"></a>
+                            {% endif %}
+                            {% if post.author.profile.facebook_link %}
+                            <a href="{{post.author.profile.facebook_link}}"><img src="{% static 'blog/face.jpg' %}" class="rounded float-right p-1" alt="..." style="height: 30px;"></a>
+                            {% endif %}
+                        </h5>
+                        <div class="card-body">
+                            <h4 class="card-title">
+                                <img src="{{post.starting_image.url}}" class="rounded float-right" alt="..." style="height: 150px; width: 150px;">
+                                <a href="{% url 'post-detail' post.slug %}"><h5><b>{{post.title}}</b></h5></a>                              
+                            </h4>
+                            <p class="card-text"><b>({{post.field}})</b></p>
+                            <p class="card-text">{{post.about_blog}}</p>
+                            <!--<p class="card-text ">{{post.about_blog|length}}</p>-->
+                            <small class="text-muted text-left ">{{post.date_posted}}</small>
+                            <small class="text-muted text-left p-3">5 min reads</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        {% endif %}
+        {% endfor %}      
+    {% else %}
+    No reading List
+    {% endif %}
+{% endblock content %}
